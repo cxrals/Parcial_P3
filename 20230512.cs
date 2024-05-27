@@ -7,7 +7,7 @@ CentroMedico(id, nombre, dirección, teléfono)
 Paciente(id, nombre, cedula, idCentroMedico)
 Solicitud(id, fecha, idPaciente, completada)
 Examen(codigo, nombre, preparación, tipo ) 
-SolicitudExamen(SolicitudId, ExamenCodigo)
+SolicitudExamen(SolicitudId, ExamenCodigo) ----> donut generate class, agregar listas
 */
 
 /*
@@ -36,7 +36,7 @@ public class Solicitud : IValidable {
     public int PacienteId{get;set}
     public Paciente Paciente{get;set}
 
-    public ICollection<SolicitudExamen> Exámenes {get;set;}=new List<Examen>();
+    public List<Examen> Exámenes {get;set;}
 }
 
 [Table("Examenes")]
@@ -46,7 +46,7 @@ public class Examen : IValidable {
     public string Nombre{get;set}
     public string Preparacion{get;set}
     public string Tipo{get;set}
-    public ICollection<SolicitudExamen> Exámenes {get;set;}=new List<Examen>();
+    public List<Solicitud> Solicitudes {get;set;};
 }
 
 /*
@@ -102,9 +102,24 @@ public class SolicitudController : ControllerBase {
    obtener las solicitudes deberá incluir también los exámenes solicitados
 */
 
+public List<Solicitud> BuscarPorPaciente(int id){
+    return Contexto.Solicitudes
+    .Include(s => s.Examenes)
+    .Where(s => s.PacienteId == id && s.Completada == false)
+    .OrderByDescending(s => s.Fecha)
+    .ToList();
+}
 
 /*
 4. 
    b. Dado el id de un centro médico obtener el nombre y preparación de los exámenes radiológicos 
    que haya solicitado ese centro médico. Cada examen debe aparecer una única vez
 */
+
+public List<Examen> BuscarPorCentroMedico(int id){
+    return Contexto.Examenes
+    .Where(e => e.Tipo == "Rad" && e.Solicitudes.Any(s => s.Paciente.CentroMedicoId == id))
+    .Select(e => e.Nombre, e.Preparacion)
+    .ToList();
+}
+
