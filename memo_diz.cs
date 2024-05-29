@@ -25,8 +25,65 @@ Then:
 // Inyeccion de dependencias
 // ==========================================================================================
 
-// builder.Services.AddScoped<IRepositorySample, RepositorySample>();
+// En Program
 
-// string conStr = builder.Configuration.GetConnectionString("MiConexion");
+builder.Services.AddScoped<IRepositorySample, RepositorySample>();
 
-// builder.Servides.AddDbContext<ContextClass>(options => options.UseSqlServer(conStr));
+string conStr = builder.Configuration.GetConnectionString("MiConexion");
+
+builder.Servides.AddDbContext<ContextClass>(options => options.UseSqlServer(conStr));
+
+// ==========================================================================================
+// Clase de contexto
+// ==========================================================================================
+
+public class ObligatorioContext : DbContext {
+    public DbSet<Obj> Objs { get; set; }
+
+    public ObligatorioContext(DbContextOptions options) : base(options) {
+    
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder) {
+        base.OnModelCreating(modelBuilder);
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
+        base.OnConfiguring(optionsBuilder);
+        optionsBuilder.UseSqlServer("Aca va el string de conexion")
+    }
+}
+
+// ==========================================================================================
+// Migrations
+// ==========================================================================================
+
+/*
+- Add-Migration <nombre descriptivo>
+
+- Update-Database [nombre de la migración de destino]
+    - Si no se proporciona nombre de migración de destino, 
+        aplica todas las migraciones pendientes en orden hacia adelante 
+
+    - Si se proporciona nombre, 
+        revierte todas las migraciones posteriores a la de destino, en orden hacia atrás 
+
+- Remove-Migration
+    - Quita de la carpeta Migrations la última migración que NO esté aplicada en la BD
+
+*/
+
+// ==========================================================================================
+// .NET WebApi helpers
+// ==========================================================================================
+
+/*
+
+200 - Ok                    - Ok()
+201 - Created               - Created(ruta, objeto)
+204 - No Content            - NoContent()
+400 - Bad Request           - BadRequest()
+404 - Not Found             - NotFount()
+500 - Internal Server Error - InternalServerError()
+
+*/
