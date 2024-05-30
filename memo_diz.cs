@@ -55,6 +55,26 @@ public class ObligatorioContext : DbContext {
 }
 
 // ==========================================================================================
+// Data Annotations
+// ==========================================================================================
+[Index(nameof(Nombre), IsUnique = true)] // si el atributo es unico
+[Table("Servicios")]
+public class Servicio : IValidable {
+    [Key] // Si la PK es Id entonces la agrega por defecto, si no usar esto
+    public int Codigo{get;set}
+
+    [ForeignKey(nameof(Obj))] // si la FK tiene formato NombreObjetoId no es necesario, EF lo agrega por defecto
+    public int PacienteId{get;set}
+
+    [Required]
+    [Range(0,int.MaxValue)]
+    [MaxLenght(int)]
+    [MinLength(5)]
+    [StringLength(500, MinimumLength = int)]
+    [EmailAddress]
+}
+
+// ==========================================================================================
 // Migrations
 // ==========================================================================================
 
