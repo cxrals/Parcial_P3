@@ -52,15 +52,29 @@ public class RepositorioPromociones : IRepositorioPromociones {
 4.Implementar los métodos necesarios con las consultas LINQ abajo detalladas, indicando en qué repositorio se incluyen.
     a. Dada una fecha, y una cantidad pedida, obtener todos los modelos con promociones vigentes 
     a esa fecha y para los cuales la cantidad pedida permita aplicar el descuento (15 puntos)
-    b. Dada un código de modelo, obtener todos los distribuidores a los que se les haya vendido 
-    dicho modelo en el presente año, ordenados por razón social en forma descendente (15 puntos).
 */
+// En repo promociones
+public List<Calzado> CalzadosConPromocionesVigentes(DateOnly fecha, int cantidad) {
+    return Contexto.Promociones
+    .Where(p=> p.fechaHasta <= fecha && p.cantidadMinima >= cantidad)
+    .Select(p => p.Calzado)
+    .ToList();
+}
 
 /*
 4.Implementar los métodos necesarios con las consultas LINQ abajo detalladas, indicando en qué repositorio se incluyen.
     b. Dada un código de modelo, obtener todos los distribuidores a los que se les haya vendido 
     dicho modelo en el presente año, ordenados por razón social en forma descendente (15 puntos).
 */
+// En repo pedidos
+public List<Distribuidor> ObtenerDistribuidores(int codigo) {
+    Contexto.Pedidos
+    .Where(p => p.fecha.Year == DT.Now.Year && p.CalzadoCantidad.Any(cc.Calzado.Codigo == codigo))
+    .Select(p => p.Distribuidor)
+    .OrderByDescending(dis => dis.RazonSocial)
+    .Distinct()
+    .ToList();
+}
 
 /*
 5.

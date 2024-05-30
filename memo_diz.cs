@@ -104,6 +104,12 @@ public class Servicio : IValidable {
 204 - No Content            - NoContent()
 400 - Bad Request           - BadRequest()
 404 - Not Found             - NotFount()
-500 - Internal Server Error - InternalServerError()
+500 - Internal Server Error - StatusCode(500, "Msg")
 
+Some more
+
+401 - Unauthorized
+403 - Forbidden
+408 - Timeout
+409 - Conflict
 */

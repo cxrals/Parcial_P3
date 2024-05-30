@@ -1,3 +1,6 @@
+// ==========================================================================================
+// Implementacion Baja
+// ==========================================================================================
 // MVC
 public class ObjController : Controller {
     public ICUBaja<Obj> CUBaja {get;set;}
@@ -7,7 +10,7 @@ public class ObjController : Controller {
 
     public ActionResult Delete(int id) {
         // Obj o = llamar cu buscar object por id
-        return View(0);
+        return View(o);
     }
 
     [HttpPost]
@@ -51,6 +54,12 @@ public class RepositorioObj : IRepositorioObj {
 }
 
 /*
+    Si intento crear un record con un objeto relacionado EF por defecto
+    intenta insertar el record relacionado. Para que no lo haga hay que incluir:
+        - Contexto.Entry(obj.ObjRelacionado).State = EntityState.Unchanged;
+*/
+
+/*
 Metodos crud dbc
     - Contexto.Objs.Add(obj);
     - Contexto.Objs.Remove(obj);
@@ -65,7 +74,7 @@ Metodos crud dbc
 [Route("api/[controller]")]
 [ApiController]
 public class ObjsController : ControllerBase {
-    // casos de uso
+    // casos de uso<ObjDTO>
 
     // ctor
 
@@ -79,7 +88,7 @@ public class ObjsController : ControllerBase {
             // si encuentra 
                 return Ok(objDTO) // 200
             // si no
-                return NotFount("Msg") // 400
+                return NotFount("Msg") // 404
         } catch (Exception e) {
             return StatusCode(500, "msg") // 500
         }
@@ -89,7 +98,7 @@ public class ObjsController : ControllerBase {
     //Verbo: GET
     [HttpGet("{id}", Name = "BuscarPorId")]
     public IActionResult Get(int id) {
-        if (id <= 0) return BadRequest("El id deber ser un entero positivo");
+        if (id <= 0) return BadRequest("El id deber ser un entero positivo"); // 400
         // llamar cu buscar por id
         if (resultado == null) return NotFound("No existe el record");
         return Ok(resultado);
@@ -142,5 +151,18 @@ public class ObjsController : ControllerBase {
         } catch (Exception ex) {
             return StatusCode(500, ex.Message);
         }            
+    }
+}
+
+// ==========================================================================================
+// Exceptions
+// ==========================================================================================
+public class ExcepcionPropiaException : Exception {
+    public ExcepcionPropiaException() { }
+
+    public ExcepcionPropiaException(string mensaje) : base(mensaje) {            
+    }
+
+    public ExcepcionPropiaException(string mensaje, Exception interna) : base(mensaje, interna) {            
     }
 }
